@@ -19,7 +19,7 @@ import com.rascal.my_lib.util.ApiResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Map<String, Object>> handleConflict(
+    public ResponseEntity<?> handleConflict(
         ConflictException ex
     ) {
         return ApiResponse.error(
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound (
+    public ResponseEntity<?> handleNotFound (
         NotFoundException ex
     ) {
         return ApiResponse.error(
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String, Object>> handleBadRequest (
+    public ResponseEntity<?> handleBadRequest (
         BadRequestException ex
     ) {
         return ApiResponse.error(
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation (
+    public ResponseEntity<?> handleValidation (
         MethodArgumentNotValidException ex
     ) {
         var errorDetails = ex.getBindingResult().getFieldErrors()
@@ -74,33 +74,33 @@ public class GlobalExceptionHandler {
     // ===== BUILT-IN SPRING / JPA EXCEPTIONS =====
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, 400, "Invalid Argument", ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleUnreadable(HttpMessageNotReadableException ex) {
+    public ResponseEntity<?> handleUnreadable(HttpMessageNotReadableException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, 400, "Malformed JSON", ex.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
+    public ResponseEntity<?> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
         return ApiResponse.error(HttpStatus.METHOD_NOT_ALLOWED, 405, "Method Not Allowed", ex.getMessage());
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleUnsupportedMedia(HttpMediaTypeNotSupportedException ex) {
+    public ResponseEntity<?> handleUnsupportedMedia(HttpMediaTypeNotSupportedException ex) {
         return ApiResponse.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, 415, "Unsupported Media Type", ex.getMessage());
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, Object>> handleMissingParam(MissingServletRequestParameterException ex) {
+    public ResponseEntity<?> handleMissingParam(MissingServletRequestParameterException ex) {
         return ApiResponse.error(HttpStatus.BAD_REQUEST, 400, "Missing Parameter", ex.getMessage());
     }
 
 
     @ExceptionHandler(exception = Exception.class)
-    public ResponseEntity<Map<String, Object>> handleOther(Exception e) {
+    public ResponseEntity<?> handleOther(Exception e) {
         return ApiResponse.error(
             HttpStatus.INTERNAL_SERVER_ERROR, 
             500, "Internal Server Error", 

@@ -2,7 +2,6 @@ package com.rascal.my_lib.exception;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.rascal.my_lib.dto.ErrorTemplate;
 import com.rascal.my_lib.util.ApiResponse;
 
 import jakarta.servlet.ServletException;
@@ -42,8 +42,8 @@ public class SecurityExceptionHandler implements
     ) throws IOException, ServletException {
         writeError(
             response, request, 
-            401, "Unauthorized", 
-            ex.getMessage()    
+            401, HttpStatus.UNAUTHORIZED,
+            "Unauthorized", ex.getMessage()    
         );
     }
 
@@ -55,8 +55,8 @@ public class SecurityExceptionHandler implements
     ) throws IOException, ServletException {
         writeError(
             response, request, 
-            403, "Forbidden", 
-            ex.getMessage()    
+            403, HttpStatus.FORBIDDEN,
+            "Forbidden", ex.getMessage()    
         );
        
     }
@@ -64,27 +64,27 @@ public class SecurityExceptionHandler implements
     private void writeError(
         HttpServletResponse response, 
         HttpServletRequest request,
-        int status, String errorType, String message
+        int status, HttpStatus httpStatus,
+        String errorType, String message
     ) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(
-            Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", status,
-                "error", errorType,
-                "message", message
-            )
+            new ErrorTemplate(
+                httpStatus, status, 
+                errorType, 
+                message, 
+                LocalDateTime.now())
         ));
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleAuth(AuthenticationException ex) {
+    public ResponseEntity<?> handleAuth(AuthenticationException ex) {
         return ApiResponse.error(HttpStatus.UNAUTHORIZED, 401, "Unauthorized", ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
         return ApiResponse.error(HttpStatus.FORBIDDEN, 403, "Forbidden", ex.getMessage());
     }
 

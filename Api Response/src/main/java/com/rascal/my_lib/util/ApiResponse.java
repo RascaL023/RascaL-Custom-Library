@@ -1,56 +1,61 @@
 package com.rascal.my_lib.util;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.rascal.my_lib.dto.ErrorTemplate;
+import com.rascal.my_lib.dto.MetaTemplate;
+import com.rascal.my_lib.dto.SuccessPagedTemplate;
+import com.rascal.my_lib.dto.SuccessTemplate;
+
 public class ApiResponse {
 
-    public static ResponseEntity<Map<String, Object>> error (
+    public static ResponseEntity<?> error (
         HttpStatus httpStatus,
         int status,
         String errorType,
         String message
     ) {
         return ResponseEntity.status(httpStatus).body(
-            Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", status,
-                "error", errorType,
-                "message", message
+            new ErrorTemplate(
+                httpStatus,
+                status,
+                errorType,
+                message,
+                LocalDateTime.now()
             )
         );
     }
 
-    public static ResponseEntity<Map<String, Object>> success (
+    public static ResponseEntity<?> success (
         HttpStatus httpStatus,
         Object data
     ) {
         return ResponseEntity.status(httpStatus).body(
-            Map.of("data", data)
+            new SuccessTemplate(data)
         );
     }
 
-    public static ResponseEntity<Map<String,Object>> paged (
+    public static ResponseEntity<?> paged (
         HttpStatus httpStatus,
         Page<?> page
     ) {
-        Map<String, Object> meta = Map.of(
-            "page", page.getNumber(),
-            "size", page.getSize(),
-            "totalElements", page.getTotalElements(),
-            "totalPages", page.getTotalPages(),
-            "hasNext", page.hasNext(),
-            "hasPrevious", page.hasPrevious()
+        MetaTemplate meta = new MetaTemplate(
+            page.getNumber(),
+            page.getSize(),
+            page.getTotalElements(),
+            page.getTotalPages(),
+            page.hasNext(),
+            page.hasPrevious()
         );
 
         return ResponseEntity.status(httpStatus).body(
-            Map.of(
-                "data", page.getContent(),
-                "meta", meta
+            new SuccessPagedTemplate(
+                new SuccessTemplate(page.getContent()), 
+                meta
             )
         );
     }
