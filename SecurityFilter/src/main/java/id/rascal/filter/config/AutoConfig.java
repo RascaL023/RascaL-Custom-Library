@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 
+import id.rascal.filter.HeaderAuthFilter;
 import id.rascal.filter.JwtAuthFilter;
 import id.rascal.filter.inteface.KeyProvider;
 import id.rascal.filter.service.JwtService;
@@ -30,10 +31,9 @@ public class AutoConfig {
         return new JwtAuthFilter(mapper, jwtService);
     }
 
-    // @Bean
-    // @ConditionalOnMissingClass("io.jsonwebtoken.Jwts")
-    // public HeaderAuthFilter headerAuthFilter(ObjectMapper mapper) {
-    //     return new HeaderAuthFilter(mapper);
-    // }
+    @Bean
+    public HeaderAuthFilter headerAuthFilter() {
+        return new HeaderAuthFilter();
+    }
 
 }
