@@ -40,7 +40,11 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
         debug(request);
 
         String userId = request.getHeader("X-User-Id");
-        if (userId != null && !userId.isBlank()) {
+        String signature = request.getHeader("X-Internal-Signature");
+        if (
+            (signature != null && signature.equals("atlanta331")) &&
+            (userId != null && !userId.isBlank())
+        ) {
             List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
             String headerTemp = request.getHeader("X-User-Roles");
