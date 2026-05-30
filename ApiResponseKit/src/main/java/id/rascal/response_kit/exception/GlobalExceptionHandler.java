@@ -1,8 +1,5 @@
 package id.rascal.response_kit.exception;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +10,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import id.rascal.response_kit.template.FieldErrorTemplate;
 import id.rascal.response_kit.util.ApiResponse;
 
 @RestControllerAdvice
@@ -46,7 +44,7 @@ public class GlobalExceptionHandler {
     ) {
         return ApiResponse.error(
             HttpStatus.BAD_REQUEST, 
-            401, "Bad Request", 
+            400, "Bad Request", 
             ex.getMessage()
         );
     }
@@ -56,19 +54,14 @@ public class GlobalExceptionHandler {
         MethodArgumentNotValidException ex
     ) {
         var errorDetails = ex.getBindingResult().getFieldErrors()
-            .stream().map(field -> Map.of(
-                "field", field.getField(),
-                "message", field.getDefaultMessage()
-            )).toList();
+            .stream()
+            .map(field -> new FieldErrorTemplate(
+                field.getField(),
+                field.getDefaultMessage()
+            ))
+            .toList();
 
-        return ResponseEntity.badRequest().body(
-            Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", 400,
-                "error", "Validation failed",
-                "errorDetail", errorDetails
-            )
-        );
+        return ApiResponse.validationError(errorDetails);
     }
 
     // ===== BUILT-IN SPRING / JPA EXCEPTIONS =====

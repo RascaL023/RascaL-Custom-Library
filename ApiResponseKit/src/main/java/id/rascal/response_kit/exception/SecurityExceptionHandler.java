@@ -1,7 +1,6 @@
 package id.rascal.response_kit.exception;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import id.rascal.response_kit.template.ErrorTemplate;
 import id.rascal.response_kit.util.ApiResponse;
 
 import jakarta.servlet.ServletException;
@@ -67,11 +65,7 @@ public class SecurityExceptionHandler implements
         response.setStatus(status);
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(
-            new ErrorTemplate(
-                httpStatus, status, 
-                errorType, 
-                message, 
-                LocalDateTime.now())
+            ApiResponse.errorBody(status, errorType, message)
         ));
     }
 

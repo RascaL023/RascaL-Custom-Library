@@ -1,14 +1,12 @@
 package id.rascal.response_kit.template;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import org.springframework.http.HttpStatus;
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ErrorTemplate(
-    HttpStatus httpStatus,
-    int status,
-    String errorType,
+    boolean isSuccess,
     String message,
-    LocalDateTime timestamp
+    String errorCode,
+    Object errors,
+    MetaTemplate meta
 ) { }
-
