@@ -1,5 +1,7 @@
 package id.rascal.response_kit.exception;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,6 +16,7 @@ import id.rascal.response_kit.template.FieldErrorTemplate;
 import id.rascal.response_kit.util.ApiResponse;
 
 @RestControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConflictException.class)
